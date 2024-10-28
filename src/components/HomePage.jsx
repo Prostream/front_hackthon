@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import axios from 'axios';
 
 const HomeContainer = styled.div`
   min-height: 100vh;
@@ -82,7 +83,7 @@ const DisasterMap = styled.div`
 
 const MapTitle = styled.h2`
   color: #1d1d1f;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: 600;
   text-align: center;
@@ -141,13 +142,121 @@ const PartnersGrid = styled.div`
   margin: 0 auto;
 `;
 
+const AlertCard = styled.div`
+  background: ${props => {
+    switch(props.severity) {
+      case 'Extreme': return 'rgba(255, 59, 48, 0.1)';
+      case 'Severe': return 'rgba(255, 149, 0, 0.1)';
+      default: return 'rgba(255, 255, 255, 0.1)';
+    }
+  }};
+  border-left: 4px solid ${props => {
+    switch(props.severity) {
+      case 'Extreme': return '#ff3b30';
+      case 'Severe': return '#ff9500';
+      default: return '#0071e3';
+    }
+  }};
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+`;
+
+const AlertTitle = styled.h4`
+  color: #1d1d1f;
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+`;
+
+const AlertInfo = styled.div`
+  color: #484848;
+  font-size: 0.9rem;
+  line-height: 1.4;
+`;
+
+const AlertsContainer = styled.div`
+  height: calc(100% - 4rem);
+  overflow-y: auto;
+  padding: 16px;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+`;
+
+const NoAlertsMessage = styled.div`
+  color: #1d1d1f;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+`;
+
+// 添加新的样式组件
+const WeatherMap = styled.div`
+  width: 100%;
+  height: calc(100% - 3rem);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f5f5f7;
+  position: relative;
+  margin-top: 40px;
+`;
+
+const MapControls = styled.div`
+  position: absolute;
+  top: -40px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 8px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+`;
+
+const MapSelect = styled.select`
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  background: white;
+  font-size: 0.9rem;
+  color: #1d1d1f;
+  cursor: pointer;
+  outline: none;
+  min-width: 120px;
+  
+  &:hover {
+    border-color: #0071e3;
+  }
+  
+  &:focus {
+    border-color: #0071e3;
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.2);
+  }
+`;
+
 const HomePage = () => {
   const navigate = useNavigate();
+  const [mapLayer, setMapLayer] = useState('temp_new');
+  const [loading, setLoading] = useState(false);
+  
+  const API_KEY = '31242e954b8cb7ee0b16850d2ff39574';
 
   return (
     <HomeContainer>
       <Header>
-        <Logo>Disaster Alert System</Logo>
+        <Logo>Weather Monitor System</Logo>
         <ButtonGroup>
           <Button onClick={() => navigate('/login')} className="primary">Sign In</Button>
           <Button onClick={() => navigate('/forum')} className="secondary">Community Forum</Button>
@@ -156,15 +265,34 @@ const HomePage = () => {
 
       <MainContent>
         <DisasterMap>
-          <MapTitle>Real-time Disaster Alert Map</MapTitle>
-          <div style={{ 
-            width: '100%', 
-            height: 'calc(100% - 4rem)', 
-            backgroundColor: '#f5f5f5', 
-            borderRadius: '8px' 
-          }}>
-            {/* Map content */}
-          </div>
+          <MapTitle>Global Weather Map</MapTitle>
+          <WeatherMap>
+            <MapControls>
+              <MapSelect 
+                value={mapLayer}
+                onChange={(e) => setMapLayer(e.target.value)}
+              >
+                <option value="temp_new">Temperature</option>
+                <option value="precipitation_new">Precipitation</option>
+                <option value="clouds_new">Clouds</option>
+                <option value="pressure_new">Pressure</option>
+                <option value="wind_new">Wind Speed</option>
+              </MapSelect>
+            </MapControls>
+            <iframe
+              src={`https://openweathermap.org/weathermap?basemap=map&cities=true&layer=${mapLayer}&lat=30&lon=0&zoom=2`}
+              width="100%"
+              height="100%"
+              frameBorder="0"
+              style={{ 
+                border: 0,
+                borderRadius: '12px',
+                marginTop: '10px'
+              }}
+              allowFullScreen
+              title="Weather Map"
+            />
+          </WeatherMap>
         </DisasterMap>
       </MainContent>
 
@@ -186,7 +314,6 @@ const HomePage = () => {
             <p>Tel: xxx-xxxx-xxxx</p>
             <p>Email: contact@redcross.org</p>
           </PartnerCard>
-          {/* 可以添加更多合作机构 */}
         </PartnersGrid>
       </PartnersSection>
     </HomeContainer>
