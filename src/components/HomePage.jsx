@@ -7,7 +7,7 @@ const HomeContainer = styled.div`
   min-height: 100vh;
   display: grid;
   grid-template-rows: auto 1fr auto;
-  background-color: #f8f9fa;
+  background: #f5f5f7;
 `;
 
 const Header = styled.header`
@@ -15,12 +15,14 @@ const Header = styled.header`
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 4rem;
-  background-color: #fff;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
 const Logo = styled.h1`
-  color: #2c3e50;
+  color: #1d1d1f;
   font-size: 1.8rem;
   font-weight: 600;
 `;
@@ -33,26 +35,26 @@ const ButtonGroup = styled.div`
 const Button = styled.button`
   padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 6px;
+  border-radius: 980px;
   font-size: 1rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-weight: 500;
   
   &.primary {
-    background-color: #3498db;
+    background-color: #0071e3;
     color: white;
     &:hover {
-      background-color: #2980b9;
+      background-color: #0077ED;
     }
   }
   
   &.secondary {
     background-color: #fff;
-    color: #3498db;
-    border: 2px solid #3498db;
+    color: #0071e3;
+    border: 1px solid #0071e3;
     &:hover {
-      background-color: #3498db;
-      color: white;
+      background-color: #f5f5f7;
     }
   }
 `;
@@ -68,32 +70,75 @@ const DisasterMap = styled.div`
   width: 100%;
   max-width: 1200px;
   height: 600px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   padding: 2rem;
   margin: 0 auto;
   text-align: center;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 `;
 
 const MapTitle = styled.h2`
-  color: #2c3e50;
+  color: #1d1d1f;
   margin-bottom: 2rem;
   font-size: 1.5rem;
+  font-weight: 600;
   text-align: center;
 `;
 
 const PartnersSection = styled.footer`
   padding: 3rem 4rem;
-  background-color: #fff;
+  background: linear-gradient(
+    135deg,
+    #000000 0%,
+    #1d1d1f 100%
+  );
   box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
 `;
 
 const PartnersTitle = styled.h3`
-  color: #2c3e50;
+  color: #f5f5f7;
   font-size: 1.5rem;
   margin-bottom: 2rem;
   text-align: center;
+  font-weight: 600;
+`;
+
+const PartnerCard = styled.div`
+  background: rgba(255, 255, 255, 0.1);
+  padding: 24px;
+  border-radius: 16px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: #f5f5f7;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  h4 {
+    color: #f5f5f7;
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  p {
+    color: rgba(255, 255, 255, 0.8);
+    margin: 8px 0;
+    font-size: 0.9rem;
+  }
+`;
+
+const PartnersGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 `;
 
 const HomePage = () => {
@@ -125,13 +170,24 @@ const HomePage = () => {
 
       <PartnersSection>
         <PartnersTitle>合作机构</PartnersTitle>
-        <div className="partners-grid">
-          <div className="partner-card">
+        <PartnersGrid>
+          <PartnerCard>
             <h4>世界自然基金会</h4>
             <p>电话：xxx-xxxx-xxxx</p>
             <p>邮箱：contact@wwf.org</p>
-          </div>
-        </div>
+          </PartnerCard>
+          <PartnerCard>
+            <h4>联合国环境规划署</h4>
+            <p>电话：xxx-xxxx-xxxx</p>
+            <p>邮箱：contact@unep.org</p>
+          </PartnerCard>
+          <PartnerCard>
+            <h4>中国环境保护部</h4>
+            <p>电话：xxx-xxxx-xxxx</p>
+            <p>邮箱：contact@mee.gov.cn</p>
+          </PartnerCard>
+          {/* 可以添加更多合作机构 */}
+        </PartnersGrid>
       </PartnersSection>
     </HomeContainer>
   );
