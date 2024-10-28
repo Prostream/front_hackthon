@@ -1,6 +1,7 @@
 // Register.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Register.css';
 
 function Register() {
@@ -27,25 +28,18 @@ function Register() {
     event.preventDefault();
 
     try {
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await axios.post('/api/register', formData);
 
-      if (response.ok) {
-        const result = await response.json();
+      if (response.status === 200) {
         setMessage({ text: 'Registration successful!', type: 'success' });
         setTimeout(() => navigate('/login'), 2000);
       } else {
-        const errorData = await response.json();
-        setMessage({ text: `Registration failed: ${errorData.message}`, type: 'error' });
+        setMessage({ text: `Registration failed: ${response.data.message}`, type: 'error' });
       }
     } catch (error) {
       console.error('Error during registration:', error);
-      setMessage({ text: 'An error occurred during registration. Please try again.', type: 'error' });
+      const errorMessage = error.response?.data?.message || 'An error occurred during registration. Please try again.';
+      setMessage({ text: errorMessage, type: 'error' });
     }
   };
 

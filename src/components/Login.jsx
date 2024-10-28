@@ -1,5 +1,7 @@
+// Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Login.css';
 
 function Login() {
@@ -21,31 +23,19 @@ function Login() {
   const handleLogin = async (event) => {
     event.preventDefault();
     
-    const loginData = {
-        username: formData.username,
-        password: formData.password,
-    };
-
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(loginData),
-      });
+      const response = await axios.post('/api/login', formData);
 
-      if (response.ok) {
-        const result = await response.json();
+      if (response.status === 200) {
         setMessage({ text: 'Login successful!', type: 'success' });
         setTimeout(() => navigate('/home'), 2000);
       } else {
-        const errorData = await response.json();
-        setMessage({ text: `Login failed: ${errorData.message}`, type: 'error' });
+        setMessage({ text: `Login failed: ${response.data.message}`, type: 'error' });
       }
     } catch (error) {
       console.error('Error during login:', error);
-      setMessage({ text: 'An error occurred during login. Please try again.', type: 'error' });
+      const errorMessage = error.response?.data?.message || 'An error occurred during login. Please try again.';
+      setMessage({ text: errorMessage, type: 'error' });
     }
   };
 
