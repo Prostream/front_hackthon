@@ -147,44 +147,44 @@ const HomePage = () => {
   return (
     <HomeContainer>
       <Header>
-        <Logo>灾害预警系统</Logo>
+        <Logo>Disaster Alert System</Logo>
         <ButtonGroup>
-          <Button onClick={() => navigate('/login')} className="primary">登录</Button>
-          <Button onClick={() => navigate('/forum')} className="secondary">进入互助论坛</Button>
+          <Button onClick={() => navigate('/login')} className="primary">Sign In</Button>
+          <Button onClick={() => navigate('/forum')} className="secondary">Community Forum</Button>
         </ButtonGroup>
       </Header>
 
       <MainContent>
         <DisasterMap>
-          <MapTitle>实时灾害预警地图</MapTitle>
+          <MapTitle>Real-time Disaster Alert Map</MapTitle>
           <div style={{ 
             width: '100%', 
             height: 'calc(100% - 4rem)', 
             backgroundColor: '#f5f5f5', 
             borderRadius: '8px' 
           }}>
-            {/* 地图内容 */}
+            {/* Map content */}
           </div>
         </DisasterMap>
       </MainContent>
 
       <PartnersSection>
-        <PartnersTitle>合作机构</PartnersTitle>
+        <PartnersTitle>Partner Organizations</PartnersTitle>
         <PartnersGrid>
           <PartnerCard>
-            <h4>世界自然基金会</h4>
-            <p>电话：xxx-xxxx-xxxx</p>
-            <p>邮箱：contact@wwf.org</p>
+            <h4>World Wildlife Fund</h4>
+            <p>Tel: xxx-xxxx-xxxx</p>
+            <p>Email: contact@wwf.org</p>
           </PartnerCard>
           <PartnerCard>
-            <h4>联合国环境规划署</h4>
-            <p>电话：xxx-xxxx-xxxx</p>
-            <p>邮箱：contact@unep.org</p>
+            <h4>United Nations Environment</h4>
+            <p>Tel: xxx-xxxx-xxxx</p>
+            <p>Email: contact@unep.org</p>
           </PartnerCard>
           <PartnerCard>
-            <h4>中国环境保护部</h4>
-            <p>电话：xxx-xxxx-xxxx</p>
-            <p>邮箱：contact@mee.gov.cn</p>
+            <h4>Red Cross</h4>
+            <p>Tel: xxx-xxxx-xxxx</p>
+            <p>Email: contact@redcross.org</p>
           </PartnerCard>
           {/* 可以添加更多合作机构 */}
         </PartnersGrid>
