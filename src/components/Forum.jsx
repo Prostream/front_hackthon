@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styled from '@emotion/styled';
 
@@ -313,7 +314,11 @@ const TagsContainer = styled.div`
   margin-top: 1rem;
 `;
 
+
+
 const Forum = () => {
+  const location = useLocation();
+  const disasterLocation = location.state?.location || ''; // 获取传递的灾区地址
   const [posts, setPosts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -324,7 +329,8 @@ const Forum = () => {
     type: 'Need-regular',
     tags: [],
     newTag: '',
-    image: null
+    image: null,
+    location: disasterLocation
   });
   const [filter, setFilter] = useState('all');
 
@@ -338,9 +344,18 @@ const Forum = () => {
         console.error("Failed to fetch posts:", error);
       }
     };
-
     fetchPosts();
   }, []);
+
+  // 根据灾区地址和过滤器条件过滤帖子
+  const filteredPosts = posts.filter(post => 
+    post.location === disasterLocation && // 只显示与灾区地址匹配的帖子
+    (
+      filter === 'all' || 
+      (filter === 'offer' && post.type === 'offer') || 
+      (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency'))
+    )
+  );
 
   // 处理表单输入变化
   const handleInputChange = (e) => {
@@ -402,7 +417,8 @@ const Forum = () => {
       content: `${formData.itemName} - quantity: ${formData.quantity}\n${formData.description}\nContact Number: ${formData.contact}`,
       type: formData.type,
       tags: [formData.itemName, ...formData.tags],
-      image: formData.image
+      image: formData.image,
+      location: disasterLocation
     };
 
     try {
@@ -421,15 +437,12 @@ const Forum = () => {
       type: 'Need-regular',
       tags: [],
       newTag: '',
-      image: null
+      image: null,
+      location: disasterLocation
     });
   };
 
-  const filteredPosts = posts.filter(post => 
-    filter === 'all' || 
-    (filter === 'offer' && post.type === 'offer') || 
-    (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency'))
-  );
+ 
 
   // 添加这个处理函数
   const handleFilterClick = (value) => {

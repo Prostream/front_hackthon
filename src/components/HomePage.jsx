@@ -4,6 +4,59 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
 
+// 弹出窗口的样式
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+`;
+
+const ModalTitle = styled.h3`
+  margin-bottom: 1rem;
+  color: #1d1d1f;
+`;
+
+const AddressInput = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+`;
+
+const ModalButton = styled.button`
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #0071e3;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #005bb5;
+  }
+`;
+
 const HomeContainer = styled.div`
   min-height: 100vh;
   display: grid;
@@ -276,7 +329,25 @@ const MapSelect = styled.select`
 const HomePage = () => {
   const navigate = useNavigate();
   const [mapLayer, setMapLayer] = useState('temp_new');
-  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [disasterLocation, setDisasterLocation] = useState('');
+
+  // 打开弹窗
+  const openModal = () => setShowModal(true);
+
+  // 关闭弹窗
+  const closeModal = () => setShowModal(false);
+
+  // 处理地址输入
+  const handleLocationChange = (e) => setDisasterLocation(e.target.value);
+
+  // 跳转到 Forum 页面，并传递灾区地址
+  const goToForum = () => {
+    if (disasterLocation.trim()) {
+      closeModal();
+      navigate('/forum', { state: { location: disasterLocation } });
+    }
+  };
   
   const API_KEY = '31242e954b8cb7ee0b16850d2ff39574';
 
@@ -302,9 +373,25 @@ const HomePage = () => {
         </Logo>
         <ButtonGroup>
           <Button onClick={() => navigate('/login')} className="primary">Sign In</Button>
-          <Button onClick={() => navigate('/forum')} className="secondary">Community Forum</Button>
+          <Button onClick={openModal} className="secondary">Community Forum</Button>
         </ButtonGroup>
       </Header>
+
+      {/* 弹出窗口 */}
+      {showModal && (
+        <ModalOverlay onClick={closeModal}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalTitle>Enter Disaster Location</ModalTitle>
+            <AddressInput
+              type="text"
+              placeholder="Enter disaster location"
+              value={disasterLocation}
+              onChange={handleLocationChange}
+            />
+            <ModalButton onClick={goToForum}>Confirm</ModalButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
 
       <MainContent>
         <DisasterMap>
