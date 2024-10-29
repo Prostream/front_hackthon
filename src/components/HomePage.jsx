@@ -445,45 +445,46 @@ const HomePage = () => {
     }
   };
 
-  // National Resources
+  
   const nationalResources = [
     {
-      name: "Storm Prediction",
-      description: "NOAA's National Weather Service Storm Prediction Center",
+      name: "resources.stormPrediction.name",
+      description: "resources.stormPrediction.description",
       icon: <WiStormWarning />,
       url: "https://www.spc.noaa.gov/"
     },
     {
-      name: "Earthquake Alerts",
-      description: "USGS Earthquake Hazards Program",
+      name: "resources.earthquakeAlerts.name",
+      description: "resources.earthquakeAlerts.description",
       icon: <WiEarthquake />,
       url: "https://earthquake.usgs.gov/"
     },
     {
-      name: "Flood Warnings",
-      description: "National Weather Service Flood Information",
+      name: "resources.floodWarnings.name",
+      description: "resources.floodWarnings.description",
       icon: <WiFlood />,
       url: "https://water.weather.gov/ahps/"
     },
     {
-      name: "Severe Weather",
-      description: "National Weather Service Severe Weather Information",
+      name: "resources.severeWeather.name",
+      description: "resources.severeWeather.description",
       icon: <WiTornado />,
       url: "https://www.weather.gov/safety/"
     },
     {
-      name: "Wildfire Updates",
-      description: "Active Fire Detection Maps",
+      name: "resources.wildfireUpdates.name",
+      description: "resources.wildfireUpdates.description",
       icon: <WiFire />,
       url: "https://www.nifc.gov/fire-information"
     },
     {
-      name: "Heat Warnings",
-      description: "Extreme Heat Safety",
+      name: "resources.heatWarnings.name",
+      description: "resources.heatWarnings.description",
       icon: <WiThermometer />,
       url: "https://www.weather.gov/safety/heat"
     }
   ];
+  
   
   const API_KEY = '31242e954b8cb7ee0b16850d2ff39574';
 
@@ -572,7 +573,7 @@ const HomePage = () => {
       </MainContent>
 
       <ResourcesSection>
-        <ResourcesTitle>Emergency Resources</ResourcesTitle>
+        <ResourcesTitle>{t('resourcesTitle')}</ResourcesTitle>
         <ResourcesGrid>
           {nationalResources.map((resource, index) => (
             <ResourceCard 
@@ -582,8 +583,8 @@ const HomePage = () => {
               rel="noopener noreferrer"
             >
               <ResourceIcon>{resource.icon}</ResourceIcon>
-              <ResourceName>{resource.name}</ResourceName>
-              <ResourceDescription>{resource.description}</ResourceDescription>
+              <ResourceName>{t(resource.name)}</ResourceName>
+              <ResourceDescription>{t(resource.description)}</ResourceDescription>
             </ResourceCard>
           ))}
         </ResourcesGrid>

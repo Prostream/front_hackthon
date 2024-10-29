@@ -15,6 +15,15 @@ export const resources = {
       'map.pressure': 'Pressure',
       'map.wind': 'Wind Speed',
       'partners.title': 'Partner Organizations',
+      'resourcesTitle': 'Emergency Resources',
+      'resources': {
+        'stormPrediction': { 'name': 'Storm Prediction', 'description': "NOAA's National Weather Service Storm Prediction Center" },
+        'earthquakeAlerts': { 'name': 'Earthquake Alerts', 'description': 'USGS Earthquake Hazards Program' },
+        'floodWarnings': { 'name': 'Flood Warnings', 'description': 'National Weather Service Flood Information' },
+        'severeWeather': { 'name': 'Severe Weather', 'description': 'National Weather Service Severe Weather Information' },
+        'wildfireUpdates': { 'name': 'Wildfire Updates', 'description': 'Active Fire Detection Maps' },
+        'heatWarnings': { 'name': 'Heat Warnings', 'description': 'Extreme Heat Safety' }
+      }
     }
   },
   es: {
@@ -33,6 +42,15 @@ export const resources = {
       'map.pressure': 'Presión',
       'map.wind': 'Velocidad del Viento',
       'partners.title': 'Organizaciones Asociadas',
+      'resourcesTitle': ' Recursos de emergencia',
+      'resources': {
+        'stormPrediction': { 'name': 'Predicción de Tormentas', 'description': 'Centro de Predicción de Tormentas del Servicio Meteorológico Nacional de NOAA' },
+        'earthquakeAlerts': { 'name': 'Alertas de Terremotos', 'description': 'Programa de Peligros de Terremotos de USGS' },
+        'floodWarnings': { 'name': 'Advertencias de Inundaciones', 'description': 'Información sobre Inundaciones del Servicio Meteorológico Nacional' },
+        'severeWeather': { 'name': 'Clima Severo', 'description': 'Información de Clima Severo del Servicio Meteorológico Nacional' },
+        'wildfireUpdates': { 'name': 'Actualizaciones de Incendios Forestales', 'description': 'Mapas de Detección de Incendios Activos' },
+        'heatWarnings': { 'name': 'Advertencias de Calor', 'description': 'Seguridad para Calor Extremo' }
+      }
     }
   },
   zh: {
@@ -51,6 +69,15 @@ export const resources = {
       'map.pressure': '气压',
       'map.wind': '风速',
       'partners.title': '合作机构',
+      'resourcesTitle': '紧急情况资源',
+      'resources': {
+        'stormPrediction': { 'name': '风暴预测', 'description': 'NOAA国家气象局风暴预测中心' },
+        'earthquakeAlerts': { 'name': '地震警报', 'description': 'USGS地震灾害计划' },
+        'floodWarnings': { 'name': '洪水警告', 'description': '国家气象局洪水信息' },
+        'severeWeather': { 'name': '恶劣天气', 'description': '国家气象局恶劣天气信息' },
+        'wildfireUpdates': { 'name': '野火更新', 'description': '活跃火灾检测地图' },
+        'heatWarnings': { 'name': '高温警告', 'description': '极端高温安全' }
+      }
     }
   }
 }; 
