@@ -349,7 +349,7 @@ const Forum = () => {
 
   // 根据灾区地址和过滤器条件过滤帖子
   const filteredPosts = posts.filter(post => 
-    post.location === disasterLocation && // 只显示与灾区地址匹配的帖子
+    post.location?.toLowerCase() === disasterLocation?.toLowerCase() && // 只显示与灾区地址匹配的帖子
     (
       filter === 'all' || 
       (filter === 'offer' && post.type === 'offer') || 
