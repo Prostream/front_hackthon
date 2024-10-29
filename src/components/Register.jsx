@@ -9,6 +9,8 @@ function Register() {
   const [formData, setFormData] = useState({
     username: '',
     password: '',
+    email: '',
+    phoneNumber: '',
     gender: '',
     birthday: '',
     address: '',
@@ -28,7 +30,7 @@ function Register() {
     event.preventDefault();
 
     try {
-      const response = await axios.post('/api/register', formData);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, formData);
 
       if (response.status === 200) {
         setMessage({ text: 'Registration successful!', type: 'success' });
@@ -76,6 +78,26 @@ function Register() {
           value={formData.password}
           onChange={handleChange}
           placeholder="Enter your password"
+          required
+        />
+
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          placeholder="Enter your email"
+          required
+        />
+
+        <label>Phone Number</label>
+        <input
+          type="tel"
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          placeholder="Enter your phone number"
           required
         />
 

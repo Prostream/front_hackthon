@@ -24,11 +24,12 @@ function Login() {
     event.preventDefault();
     
     try {
-      const response = await axios.post('/api/login', formData);
+      console.log(`${process.env.REACT_APP_API_URL}`);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, formData);
 
       if (response.status === 200) {
         setMessage({ text: 'Login successful!', type: 'success' });
-        setTimeout(() => navigate('/home'), 2000);
+        setTimeout(() => navigate('/forum'), 2000);
       } else {
         setMessage({ text: `Login failed: ${response.data.message}`, type: 'error' });
       }
