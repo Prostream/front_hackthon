@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 // 弹出窗口的样式
 const ModalOverlay = styled.div`
@@ -326,11 +327,29 @@ const MapSelect = styled.select`
   }
 `;
 
+// 添加新的样式组件
+const LanguageSelect = styled.select`
+  padding: 6px 12px;
+  border-radius: 980px;
+  border: 1px solid #0071e3;
+  background: white;
+  font-size: 0.9rem;
+  color: #0071e3;
+  cursor: pointer;
+  outline: none;
+  margin-left: 1rem;
+  
+  &:hover {
+    background-color: #f5f5f7;
+  }
+`;
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [mapLayer, setMapLayer] = useState('temp_new');
   const [showModal, setShowModal] = useState(false);
   const [disasterLocation, setDisasterLocation] = useState('');
+  const { t, i18n } = useTranslation();
 
   // 打开弹窗
   const openModal = () => setShowModal(true);
@@ -367,13 +386,22 @@ const HomePage = () => {
             </svg>
           </LogoIcon>
           <LogoText>
-            <LogoTitle>Climate Shield</LogoTitle>
-            <LogoSubtitle>Extreme Weather Alert and Mutual Aid Platform</LogoSubtitle>
+            <LogoTitle>{t('title')}</LogoTitle>
+            <LogoSubtitle>{t('subtitle')}</LogoSubtitle>
           </LogoText>
         </Logo>
         <ButtonGroup>
-          <Button onClick={() => navigate('/login')} className="primary">Sign In</Button>
-          <Button onClick={openModal} className="secondary">Community Forum</Button>
+          <Button onClick={() => navigate('/login')} className="primary">
+            {t('signin')}
+          </Button>
+          <Button onClick={openModal} className="secondary">
+            {t('community')}
+          </Button>
+          <LanguageSelect onChange={(e) => i18n.changeLanguage(e.target.value)} value={i18n.language}>
+            <option value="en">English</option>
+            <option value="es">Español</option>
+            <option value="zh">中文</option>
+          </LanguageSelect>
         </ButtonGroup>
       </Header>
 
@@ -381,32 +409,32 @@ const HomePage = () => {
       {showModal && (
         <ModalOverlay onClick={closeModal}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
-            <ModalTitle>Enter Disaster Location</ModalTitle>
+            <ModalTitle>{t('modal.title')}</ModalTitle>
             <AddressInput
               type="text"
-              placeholder="Enter disaster location"
+              placeholder={t('modal.placeholder')}
               value={disasterLocation}
               onChange={handleLocationChange}
             />
-            <ModalButton onClick={goToForum}>Confirm</ModalButton>
+            <ModalButton onClick={goToForum}>{t('modal.confirm')}</ModalButton>
           </ModalContent>
         </ModalOverlay>
       )}
 
       <MainContent>
         <DisasterMap>
-          <MapTitle>Global Weather Map</MapTitle>
+          <MapTitle>{t('map.title')}</MapTitle>
           <WeatherMap>
             <MapControls>
               <MapSelect 
                 value={mapLayer}
                 onChange={(e) => setMapLayer(e.target.value)}
               >
-                <option value="temp_new">Temperature</option>
-                <option value="precipitation_new">Precipitation</option>
-                <option value="clouds_new">Clouds</option>
-                <option value="pressure_new">Pressure</option>
-                <option value="wind_new">Wind Speed</option>
+                <option value="temp_new">{t('map.temperature')}</option>
+                <option value="precipitation_new">{t('map.precipitation')}</option>
+                <option value="clouds_new">{t('map.clouds')}</option>
+                <option value="pressure_new">{t('map.pressure')}</option>
+                <option value="wind_new">{t('map.wind')}</option>
               </MapSelect>
             </MapControls>
             <iframe
@@ -427,7 +455,7 @@ const HomePage = () => {
       </MainContent>
 
       <PartnersSection>
-        <PartnersTitle>Partner Organizations</PartnersTitle>
+        <PartnersTitle>{t('partners.title')}</PartnersTitle>
         <PartnersGrid>
           <PartnerCard>
             <h4>World Wildlife Fund</h4>
