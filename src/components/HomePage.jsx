@@ -22,10 +22,37 @@ const Header = styled.header`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
-const Logo = styled.h1`
+const Logo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
+
+const LogoIcon = styled.div`
+  font-size: 2rem;
+  color: #0071e3;
+  display: flex;
+  align-items: center;
+`;
+
+const LogoText = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const LogoTitle = styled.h1`
   color: #1d1d1f;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 600;
+  letter-spacing: -0.5px;
+  margin: 0;
+`;
+
+const LogoSubtitle = styled.span`
+  color: #86868b;
+  font-size: 0.9rem;
+  font-weight: 500;
 `;
 
 const ButtonGroup = styled.div`
@@ -256,7 +283,23 @@ const HomePage = () => {
   return (
     <HomeContainer>
       <Header>
-        <Logo>Weather Monitor System</Logo>
+        <Logo>
+          <LogoIcon>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 3V4M12 20V21M4 12H3M6.31412 6.31412L5.5 5.5M17.6859 6.31412L18.5 5.5M6.31412 17.69L5.5 18.5M17.6859 17.69L18.5 18.5M21 12H20" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round"/>
+              <circle cx="12" cy="12" r="4" 
+                      stroke="currentColor" 
+                      strokeWidth="2"/>
+            </svg>
+          </LogoIcon>
+          <LogoText>
+            <LogoTitle>WeatherScope</LogoTitle>
+            <LogoSubtitle>Global Monitoring System</LogoSubtitle>
+          </LogoText>
+        </Logo>
         <ButtonGroup>
           <Button onClick={() => navigate('/login')} className="primary">Sign In</Button>
           <Button onClick={() => navigate('/forum')} className="secondary">Community Forum</Button>
