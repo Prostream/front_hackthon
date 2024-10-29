@@ -3,23 +3,178 @@ import React, { useState } from 'react';
 import styled from '@emotion/styled';
 
 const ForumContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  background-color: #ffffff;
 `;
 
 const Header = styled.header`
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem 0;
+  border-bottom: 1px solid #f2f2f2;
+`;
+
+const TitleRow = styled.div`
+  display: flex;
   align-items: center;
-  padding: 1.5rem 2rem;
-  position: relative;
+  justify-content: space-between;
+`;
+
+const BackButton = styled.button`
+  padding: 0.5rem 0.8rem;
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  &:hover {
+    background-color: #e8e8ed;
+  }
 `;
 
 const Title = styled.h1`
-  color: #2c3e50;
-  font-size: 1.8rem;
+  color: #1d1d1f;
+  font-size: 2.5rem;
   font-weight: 600;
   text-align: center;
-  flex: 1;
+  letter-spacing: -0.02em;
   margin: 0;
+`;
+
+const ActionRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const FilterDropdown = styled.select`
+  padding: 0.8rem 2rem 0.8rem 1.2rem;
+  border-radius: 980px;
+  border: none;
+  background-color: #f5f5f7;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  color: #1d1d1f;
+  transition: all 0.3s ease;
+  
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d1d1f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 0.8em;
+
+  &:hover {
+    background-color: #e8e8ed;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(0, 125, 250, 0.1);
+  }
+`;
+
+const CreatePostButton = styled.button`
+  padding: 0.8rem 1.8rem;
+  background-color: #0071e3;
+  color: white;
+  border: none;
+  border-radius: 980px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #0077ED;
+  }
+`;
+
+const PostGrid = styled.div`
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  padding: 2rem 0;
+`;
+
+const PostCard = styled.div`
+  background: ${({ type }) =>
+    type === 'help-regular' ? '#f5f5f7' :
+    type === 'help-emergency' ? '#fef2f2' :
+    '#f2f7f2'};
+  padding: 1.8rem;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  h3 {
+    color: #1d1d1f;
+    margin: 0 0 1rem 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    color: #424245;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+    font-size: 0.95rem;
+  }
+`;
+
+const PostType = styled.span`
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+
+  &.help-regular {
+    background-color: #f5f5f7;
+    color: #1d1d1f;
+  }
+
+  &.help-emergency {
+    background-color: #fef2f2;
+    color: #dc2626;
+  }
+
+  &.offer {
+    background-color: #f2f7f2;
+    color: #166534;
+  }
+`;
+
+const PostTag = styled.span`
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  background-color: #f5f5f7;
+  color: #1d1d1f;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #e8e8ed;
+  }
 `;
 
 const MainContent = styled.div`
@@ -31,123 +186,6 @@ const MainContent = styled.div`
 const ContentArea = styled.div`
   flex: 1;
   padding: 0 2rem;
-`;
-
-const PostGrid = styled.div`
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-`;
-
-const PostCard = styled.div`
-  background: ${({ type }) =>
-    type === 'help-regular' ? '#ffebeb' :
-    type === 'help-emergency' ? '#ffe6e6' :
-    '#eaf7eb'};
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  }
-
-  h3 {
-    color: #2c3e50;
-    margin: 0 0 1rem 0;
-    font-size: 1.2rem;
-  }
-
-  p {
-    color: #666;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-  }
-
-  img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-  }
-`;
-
-const TagsContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const PostTag = styled.span`
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  background-color: #e9ecef;
-  color: #495057;
-  font-size: 0.875rem;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-
-  &:hover {
-    background-color: #dee2e6;
-  }
-
-  span {
-    font-size: 1.2rem;
-    line-height: 1;
-  }
-`;
-
-const PostType = styled.span`
-  display: inline-block;
-  padding: 0.4rem 0.8rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
-
-  &.help-regular {
-    background-color: #ffcccc;
-    color: #cc0000;
-  }
-
-  &.help-emergency {
-    background-color: #ff6666;
-    color: #b30000;
-  }
-
-  &.offer {
-    background-color: #d4edda;
-    color: #28a745;
-  }
-`;
-
-const CreatePostButton = styled.button`
-  position: absolute;
-  right: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 0.8rem 1.5rem;
-  background-color: #007AFF;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background-color: #0066D6;
-    transform: translateY(calc(-50% - 2px));
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
 `;
 
 const Modal = styled.div`
@@ -183,7 +221,7 @@ const ModalHeader = styled.div`
 const ModalTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1A1A1A;
+  color: #1d1d1f;
   margin: 0;
 `;
 
@@ -191,20 +229,37 @@ const ActionButton = styled.button`
   background: none;
   border: none;
   font-size: 1rem;
-  color: ${props => props.primary ? '#9B6B43' : '#666'};
+  color: ${props => props.primary ? '#007AFF' : '#666'};
   padding: 0.5rem 1rem;
   cursor: pointer;
   transition: all 0.2s;
   border-radius: 8px;
 
   &:hover {
-    background: ${props => props.primary ? '#F7ECE3' : '#F5F5F5'};
+    background: ${props => props.primary ? '#F0F7FF' : '#F5F5F5'};
   }
 
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
+`;
+
+const TypeSelector = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+`;
+
+const TypeButton = styled.button`
+  flex: 1;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  background: ${props => props.active ? '#007AFF' : '#f5f5f7'};
+  color: ${props => props.active ? 'white' : '#1d1d1f'};
+  cursor: pointer;
+  transition: all 0.3s ease;
 `;
 
 const Input = styled.input`
@@ -225,23 +280,6 @@ const TextArea = styled.textarea`
   font-size: 1rem;
   min-height: 100px;
   resize: vertical;
-`;
-
-const TypeSelector = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1rem;
-`;
-
-const TypeButton = styled.button`
-  flex: 1;
-  padding: 0.8rem;
-  border: none;
-  border-radius: 8px;
-  background: ${props => props.active ? '#007AFF' : '#f5f5f5'};
-  color: ${props => props.active ? 'white' : '#333'};
-  cursor: pointer;
-  transition: all 0.3s ease;
 `;
 
 const ImageUpload = styled.div`
@@ -266,49 +304,11 @@ const TagContainer = styled.div`
   margin-bottom: 1rem;
 `;
 
-const FilterDropdown = styled.select`
-  position: absolute;
-  left: 2rem;
-  top: 50%;
-  transform: translateY(-50%);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  border: 1px solid #e5e5e5;
-  background-color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  appearance: none;
-  color: #007AFF;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    border-color: #007AFF;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-
-  &:focus {
-    outline: none;
-    border-color: #007AFF;
-    box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.1);
-  }
-`;
-
-const ModalTag = styled.span`
-  background: #F7ECE3;
-  color: #9B6B43;
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  font-size: 0.9rem;
+const TagsContainer = styled.div`
   display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #9B6B43;
-    color: white;
-  }
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
 `;
 
 const Forum = () => {
@@ -376,7 +376,7 @@ const Forum = () => {
   });
   const [filter, setFilter] = useState('all');
 
-  // 处理表�����入
+  // 处理表输入
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -457,29 +457,42 @@ const Forum = () => {
     setFilter(value);
   };
 
+  const handleBackToHome = () => {
+    // 根据你的路由设置添加返回逻辑
+    window.location.href = '/';  // 或使用 React Router 的导航方法
+  };
+
   return (
     <ForumContainer>
       <Header>
-        <FilterDropdown 
-          value={filter} 
-          onChange={(e) => setFilter(e.target.value)}
-        >
-          <option value="all">All Posts</option>
-          <option value="help">Help Posts</option>
-          <option value="offer">Offer Posts</option>
-        </FilterDropdown>
-        <Title>互助论坛</Title>
-        <CreatePostButton onClick={() => setIsModalOpen(true)}>
-          发布新帖子
-        </CreatePostButton>
+        <TitleRow>
+          <BackButton onClick={handleBackToHome}>
+            ← Back to Home
+          </BackButton>
+          <Title>Community Forum</Title>
+          <div style={{ width: '116px' }}></div>
+        </TitleRow>
+        <ActionRow>
+          <FilterDropdown 
+            value={filter} 
+            onChange={(e) => setFilter(e.target.value)}
+          >
+            <option value="all">All Posts</option>
+            <option value="help">Help Posts</option>
+            <option value="offer">Offer Posts</option>
+          </FilterDropdown>
+          <CreatePostButton onClick={() => setIsModalOpen(true)}>
+            Create New Post
+          </CreatePostButton>
+        </ActionRow>
       </Header>
 
       {isModalOpen && (
         <Modal onClick={() => setIsModalOpen(false)}>
           <ModalContent onClick={e => e.stopPropagation()}>
             <ModalHeader>
-              <ModalTitle>发布新帖子</ModalTitle>
-              <ActionButton onClick={() => setIsModalOpen(false)}>关闭</ActionButton>
+              <ModalTitle>New Post</ModalTitle>
+              <ActionButton onClick={() => setIsModalOpen(false)}>Close</ActionButton>
             </ModalHeader>
 
             <TypeSelector>
@@ -487,39 +500,39 @@ const Forum = () => {
                 active={formData.type === 'help'}
                 onClick={() => handleInputChange({ target: { name: 'type', value: 'help' } })}
               >
-                求助
+                Help
               </TypeButton>
               <TypeButton 
                 active={formData.type === 'offer'}
                 onClick={() => handleInputChange({ target: { name: 'type', value: 'offer' } })}
               >
-                提供
+                Offer
               </TypeButton>
             </TypeSelector>
 
             <Input
-              placeholder="物资名称"
+              placeholder="Item Name"
               name="itemName"
               value={formData.itemName}
               onChange={handleInputChange}
             />
 
             <Input
-              placeholder="物资数量"
+              placeholder="Quantity"
               name="quantity"
               value={formData.quantity}
               onChange={handleInputChange}
             />
 
             <TextArea
-              placeholder="详细描述"
+              placeholder="Detailed Description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
             />
 
             <Input
-              placeholder="联系方式"
+              placeholder="Contact Information"
               name="contact"
               value={formData.contact}
               onChange={handleInputChange}
@@ -534,9 +547,9 @@ const Forum = () => {
                 style={{ display: 'none' }}
               />
               {formData.image ? (
-                <img src={formData.image} alt="预览" />
+                <img src={formData.image} alt="Preview" />
               ) : (
-                <p>点击添加图片</p>
+                <p>Click to Add Image</p>
               )}
             </ImageUpload>
 
@@ -551,23 +564,34 @@ const Forum = () => {
 
             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
               <Input
-                placeholder="添加标签"
+                placeholder="Add Tag"
                 value={formData.newTag}
                 name="newTag"
                 onChange={handleInputChange}
                 onKeyPress={e => e.key === 'Enter' && handleAddTag(e)}
                 style={{ marginBottom: 0 }}
               />
-              <ActionButton onClick={handleAddTag} primary>添加</ActionButton>
+              <ActionButton 
+                onClick={handleAddTag} 
+                primary
+                style={{ background: '#007AFF', color: 'white' }}
+              >
+                Add
+              </ActionButton>
             </div>
 
             <ActionButton 
               onClick={handleSubmit} 
-              primary 
-              style={{ width: '100%', padding: '0.8rem' }}
+              primary
+              style={{ 
+                width: '100%', 
+                padding: '0.8rem',
+                background: '#007AFF',
+                color: 'white'
+              }}
               disabled={!formData.itemName || !formData.description}
             >
-              发布帖子
+              Submit Post
             </ActionButton>
           </ModalContent>
         </Modal>
