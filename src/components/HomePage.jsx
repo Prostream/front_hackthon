@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
+import { WiStormWarning, WiEarthquake, WiFlood, WiTornado, WiFire, WiThermometer } from 'react-icons/wi';
+
+
 
 // 弹出窗口的样式
 const ModalOverlay = styled.div`
@@ -326,6 +329,79 @@ const MapSelect = styled.select`
   }
 `;
 
+// Add new resources section
+const ResourcesSection = styled.section`
+  padding: 60px 20px;
+  background: f5f5f7
+  );
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+`;
+
+const ResourcesTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: #2D3748;     
+  margin-bottom: 40px;
+  `;
+
+
+const ResourcesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);  // Show 3 cards per row
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  
+  @media (max-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);  // 2 cards per row on tablets
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;  // 1 card per row on mobile
+  }
+`;
+
+const ResourceCard = styled.a`
+  background: white;  // White background
+  border-radius: 16px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);  
+  }
+`;
+
+const ResourceIcon = styled.div`
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color: #0071e3;
+`;
+
+const ResourceName = styled.h3`
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 10px;
+  color: #1d1d1f;     
+`;
+
+const ResourceDescription = styled.p`
+  text-align: center;
+  color: #86868b;     
+  font-size: 14px;
+  line-height: 1.5;
+`;
+
+
+
 const HomePage = () => {
   const navigate = useNavigate();
   const [mapLayer, setMapLayer] = useState('temp_new');
@@ -348,6 +424,46 @@ const HomePage = () => {
       navigate('/forum', { state: { location: disasterLocation } });
     }
   };
+
+  // National Resources
+  const nationalResources = [
+    {
+      name: "Storm Prediction",
+      description: "NOAA's National Weather Service Storm Prediction Center",
+      icon: <WiStormWarning />,
+      url: "https://www.spc.noaa.gov/"
+    },
+    {
+      name: "Earthquake Alerts",
+      description: "USGS Earthquake Hazards Program",
+      icon: <WiEarthquake />,
+      url: "https://earthquake.usgs.gov/"
+    },
+    {
+      name: "Flood Warnings",
+      description: "National Weather Service Flood Information",
+      icon: <WiFlood />,
+      url: "https://water.weather.gov/ahps/"
+    },
+    {
+      name: "Severe Weather",
+      description: "National Weather Service Severe Weather Information",
+      icon: <WiTornado />,
+      url: "https://www.weather.gov/safety/"
+    },
+    {
+      name: "Wildfire Updates",
+      description: "Active Fire Detection Maps",
+      icon: <WiFire />,
+      url: "https://www.nifc.gov/fire-information"
+    },
+    {
+      name: "Heat Warnings",
+      description: "Extreme Heat Safety",
+      icon: <WiThermometer />,
+      url: "https://www.weather.gov/safety/heat"
+    }
+  ];
   
   const API_KEY = '31242e954b8cb7ee0b16850d2ff39574';
 
@@ -426,6 +542,24 @@ const HomePage = () => {
         </DisasterMap>
       </MainContent>
 
+      <ResourcesSection>
+        <ResourcesTitle>Emergency Resources</ResourcesTitle>
+        <ResourcesGrid>
+          {nationalResources.map((resource, index) => (
+            <ResourceCard 
+              key={index} 
+              href={resource.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <ResourceIcon>{resource.icon}</ResourceIcon>
+              <ResourceName>{resource.name}</ResourceName>
+              <ResourceDescription>{resource.description}</ResourceDescription>
+            </ResourceCard>
+          ))}
+        </ResourcesGrid>
+      </ResourcesSection>
+
       <PartnersSection>
         <PartnersTitle>Partner Organizations</PartnersTitle>
         <PartnersGrid>
@@ -446,8 +580,10 @@ const HomePage = () => {
           </PartnerCard>
         </PartnersGrid>
       </PartnersSection>
+
     </HomeContainer>
   );
 };
 
+      
 export default HomePage; 
