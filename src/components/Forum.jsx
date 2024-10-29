@@ -442,12 +442,7 @@ const Forum = () => {
     });
   };
 
- 
 
-  // 添加这个处理函数
-  const handleFilterClick = (value) => {
-    setFilter(value);
-  };
 
   const handleBackToHome = () => {
     // 根据你的路由设置添加返回逻辑
