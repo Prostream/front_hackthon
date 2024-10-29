@@ -367,8 +367,8 @@ const HomePage = () => {
             </svg>
           </LogoIcon>
           <LogoText>
-            <LogoTitle>WeatherScope</LogoTitle>
-            <LogoSubtitle>Global Monitoring System</LogoSubtitle>
+            <LogoTitle>Climate Shield</LogoTitle>
+            <LogoSubtitle>Extreme Weather Alert and Mutual Aid Platform</LogoSubtitle>
           </LogoText>
         </Logo>
         <ButtonGroup>
