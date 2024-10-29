@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import styled from '@emotion/styled';
 
 const ForumContainer = styled.div`
@@ -110,8 +111,8 @@ const PostGrid = styled.div`
 
 const PostCard = styled.div`
   background: ${({ type }) =>
-    type === 'help-regular' ? '#f5f5f7' :
-    type === 'help-emergency' ? '#fef2f2' :
+    type === 'Need-regular' ? '#f5f5f7' :
+    type === 'Need-emergency' ? '#fef2f2' :
     '#f2f7f2'};
   padding: 1.8rem;
   border-radius: 20px;
@@ -146,12 +147,12 @@ const PostType = styled.span`
   font-weight: 500;
   margin-bottom: 1rem;
 
-  &.help-regular {
+  &.Need-regular {
     background-color: #f5f5f7;
     color: #1d1d1f;
   }
 
-  &.help-emergency {
+  &.Need-emergency {
     background-color: #fef2f2;
     color: #dc2626;
   }
@@ -256,11 +257,12 @@ const TypeButton = styled.button`
   padding: 0.8rem;
   border: none;
   border-radius: 8px;
-  background: ${props => props.active ? '#007AFF' : '#f5f5f7'};
-  color: ${props => props.active ? 'white' : '#1d1d1f'};
+  background: ${(props) => (props.active ? '#007AFF' : '#f5f5f7')};
+  color: ${(props) => (props.active ? 'white' : '#1d1d1f')};
   cursor: pointer;
   transition: all 0.3s ease;
 `;
+
 
 const Input = styled.input`
   width: 100%;
@@ -312,71 +314,35 @@ const TagsContainer = styled.div`
 `;
 
 const Forum = () => {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      title: 'Need assist on purified water for a family',
-      content: 'ZIP code xxxxxx, need assistance, contact: 123-456-8901',
-      type: 'help-emergency',
-      tags: ['food', 'Emergency']
-    },
-    {
-      id: 2,
-      title: 'Wheelchair available for assistance',
-      content: 'ZIP code xxxxxx, one wheelchair available, contact: 123-456-789',
-      type: 'offer',
-      tags: ['necessities', 'Regular']
-    },
-    {
-      id: 3,
-      title: 'Temporary housing required',
-      content: 'Looking for temporary housing in area xxxxxx. Contact: 234-567-8901',
-      type: 'help-regular',
-      tags: ['housing', 'Regular']
-    },
-    {
-      id: 4,
-      title: 'Food packages available for donation',
-      content: 'Offering non-perishable food items. ZIP code xxxxxx. Contact: 345-678-9012',
-      type: 'offer',
-      tags: ['food', 'Regular']
-    },
-    {
-      id: 5,
-      title: 'Urgent medical supplies needed',
-      content: 'In need of bandages, antiseptics. ZIP code xxxxxx. Contact: 456-789-0123',
-      type: 'help-emergency',
-      tags: ['medical', 'Emergency']
-    },
-    {
-      id: 6,
-      title: 'Offering free tutoring for kids',
-      content: 'Available online or in-person in ZIP xxxxxx. Contact: 567-890-1234',
-      type: 'offer',
-      tags: ['education', 'Regular']
-    },
-    {
-      id: 7,
-      title: 'Urgent request for baby supplies',
-      content: 'Need diapers and baby formula. ZIP code xxxxxx. Contact: 678-901-2345',
-      type: 'help-emergency',
-      tags: ['baby care', 'Emergency']
-    }
-  ]);
+  const [posts, setPosts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     itemName: '',
     quantity: '',
     description: '',
     contact: '',
-    type: 'help',
+    type: 'Need-regular',
     tags: [],
     newTag: '',
     image: null
   });
   const [filter, setFilter] = useState('all');
 
-  // 处理表输入
+  // 获取所有帖子
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`);
+        setPosts(response.data);
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  // 处理表单输入变化
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -420,26 +386,39 @@ const Forum = () => {
     }
   };
 
+  // 点击选择按钮后更新类型
+  const handleTypeSelection = (type) => {
+    setFormData((prev) => ({
+      ...prev,
+      type: type,
+    }));
+  };
+
   // 处理表单提交
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newPost = {
-      id: posts.length + 1,
       title: formData.description,
-      content: `${formData.itemName} - 数量: ${formData.quantity}\n${formData.description}\n联系方式: ${formData.contact}`,
+      content: `${formData.itemName} - quantity: ${formData.quantity}\n${formData.description}\nContact Number: ${formData.contact}`,
       type: formData.type,
       tags: [formData.itemName, ...formData.tags],
       image: formData.image
     };
 
-    setPosts(prev => [...prev, newPost]);
-    setIsModalOpen(false);
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, newPost);
+      setPosts(prev => [...prev, response.data]);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to submit post:", error);
+    }
+
     setFormData({
       itemName: '',
       quantity: '',
       description: '',
       contact: '',
-      type: 'help',
+      type: 'Need-regular',
       tags: [],
       newTag: '',
       image: null
@@ -449,7 +428,7 @@ const Forum = () => {
   const filteredPosts = posts.filter(post => 
     filter === 'all' || 
     (filter === 'offer' && post.type === 'offer') || 
-    (filter === 'help' && (post.type === 'help-regular' || post.type === 'help-emergency'))
+    (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency'))
   );
 
   // 添加这个处理函数
@@ -478,7 +457,7 @@ const Forum = () => {
             onChange={(e) => setFilter(e.target.value)}
           >
             <option value="all">All Posts</option>
-            <option value="help">Help Posts</option>
+            <option value="Need">Need Posts</option>
             <option value="offer">Offer Posts</option>
           </FilterDropdown>
           <CreatePostButton onClick={() => setIsModalOpen(true)}>
@@ -496,15 +475,15 @@ const Forum = () => {
             </ModalHeader>
 
             <TypeSelector>
-              <TypeButton 
-                active={formData.type === 'help'}
-                onClick={() => handleInputChange({ target: { name: 'type', value: 'help' } })}
+              <TypeButton
+                active={formData.type === 'Need-emergency'}
+                onClick={() => handleTypeSelection('Need-emergency')}
               >
-                Help
+                Need
               </TypeButton>
-              <TypeButton 
+              <TypeButton
                 active={formData.type === 'offer'}
-                onClick={() => handleInputChange({ target: { name: 'type', value: 'offer' } })}
+                onClick={() => handleTypeSelection('offer')}
               >
                 Offer
               </TypeButton>
@@ -603,8 +582,8 @@ const Forum = () => {
             {filteredPosts.map(post => (
               <PostCard key={post.id} type={post.type}>
                 <PostType className={post.type}>
-                  {post.type === 'help-regular' && 'Regular Help'}
-                  {post.type === 'help-emergency' && 'Emergency Help'}
+                  {post.type === 'Need-regular' && 'Regular Need'}
+                  {post.type === 'Need-emergency' && 'Emergency Need'}
                   {post.type === 'offer' && 'Offer'}
                 </PostType>
                 <h3>{post.title}</h3>
