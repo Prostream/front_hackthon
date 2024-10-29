@@ -314,7 +314,22 @@ const TagsContainer = styled.div`
   margin-top: 1rem;
 `;
 
+const FilterButton = styled.button`
+  padding: 0.8rem 1.5rem;
+  background-color: #0071e3;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin: 1rem;
+  transition: all 0.3s ease;
 
+  &:hover {
+    background-color: #005bb5;
+  }
+`;
 
 const Forum = () => {
   const location = useLocation();
@@ -330,7 +345,8 @@ const Forum = () => {
     tags: [],
     newTag: '',
     image: null,
-    location: disasterLocation
+    location: disasterLocation,
+    category: 'community'
   });
   const [filter, setFilter] = useState('all');
 
@@ -349,11 +365,13 @@ const Forum = () => {
 
   // 根据灾区地址和过滤器条件过滤帖子
   const filteredPosts = posts.filter(post => 
-    post.location?.toLowerCase() === disasterLocation?.toLowerCase() && // 只显示与灾区地址匹配的帖子
+    post.location?.toLowerCase() === disasterLocation?.toLowerCase() && // Match disaster location if applicable
     (
       filter === 'all' || 
       (filter === 'offer' && post.type === 'offer') || 
-      (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency'))
+      (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency')) ||
+      (filter === 'official' && post.category === 'official') || // Include official filter
+      (filter === 'community' && post.category === 'community')   // Include community filter
     )
   );
 
@@ -366,6 +384,7 @@ const Forum = () => {
     }));
   };
 
+  
   // 处理标签添加
   const handleAddTag = (e) => {
     e.preventDefault();
@@ -438,7 +457,8 @@ const Forum = () => {
       tags: [],
       newTag: '',
       image: null,
-      location: disasterLocation
+      location: disasterLocation,
+      category: 'community'
     });
   };
 
@@ -606,8 +626,15 @@ const Forum = () => {
           </PostGrid>
         </ContentArea>
       </MainContent>
+      {/* Official and Community Filter Buttons - Below Posts */}
+    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', margin: '2rem 0' }}>
+      <FilterButton onClick={() => setFilter('official')}>Official</FilterButton>
+      <FilterButton onClick={() => setFilter('community')}>Community</FilterButton>
+    </div>
     </ForumContainer>
   );
 };
 
 export default Forum;
+
+
