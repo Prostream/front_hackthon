@@ -1,4 +1,3 @@
-// Login.jsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -11,6 +10,8 @@ function Login() {
     password: '',
   });
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [showLocationModal, setShowLocationModal] = useState(false);
+  const [disasterLocation, setDisasterLocation] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,16 +21,19 @@ function Login() {
     }));
   };
 
+  const handleLocationChange = (e) => {
+    setDisasterLocation(e.target.value);
+  };
+
   const handleLogin = async (event) => {
     event.preventDefault();
     
     try {
-      console.log(`${process.env.REACT_APP_API_URL}`);
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, formData);
 
       if (response.status === 200) {
         setMessage({ text: 'Login successful!', type: 'success' });
-        setTimeout(() => navigate('/forum'), 2000);
+        setShowLocationModal(true); // 显示地址弹窗
       } else {
         setMessage({ text: `Login failed: ${response.data.message}`, type: 'error' });
       }
@@ -38,6 +42,11 @@ function Login() {
       const errorMessage = error.response?.data?.message || 'An error occurred during login. Please try again.';
       setMessage({ text: errorMessage, type: 'error' });
     }
+  };
+
+  const handleConfirmLocation = () => {
+    setShowLocationModal(false);
+    navigate('/forum', { state: { location: disasterLocation } }); // 跳转并传递地址
   };
 
   return (
@@ -79,6 +88,24 @@ function Login() {
         <button type="submit" className="login-button">Log In</button>
         <button onClick={() => navigate('/register')} className="register-button">Register</button>
       </form>
+
+      {/* 灾区地址弹出窗口 */}
+      {showLocationModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Enter Disaster Location</h3>
+            <input
+              type="text"
+              value={disasterLocation}
+              onChange={handleLocationChange}
+              placeholder="Enter disaster location"
+            />
+            <button onClick={handleConfirmLocation} className="confirm-button">
+              Confirm
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
