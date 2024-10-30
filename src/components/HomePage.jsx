@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import axios from 'axios';
+import ChatBot from './ChatBot';
 
 import { WiStormWarning, WiEarthquake, WiFlood, WiTornado, WiFire, WiThermometer } from 'react-icons/wi';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +67,7 @@ const HomeContainer = styled.div`
   display: grid;
   grid-template-rows: auto 1fr auto;
   background: #f5f5f7;
+  position: relative;
 `;
 
 const Header = styled.header`
@@ -610,7 +612,7 @@ const HomePage = () => {
           </PartnerCard>
         </PartnersGrid>
       </PartnersSection>
-
+      <ChatBot />
     </HomeContainer>
   );
 };

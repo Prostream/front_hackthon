@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { FaLeaf, FaRecycle, FaWater, FaSeedling } from 'react-icons/fa';
+import ChatBot from './ChatBot';
 
 const PageContainer = styled.div`
   max-width: 1200px;
@@ -59,7 +60,7 @@ const EnvironmentPage = () => {
     {
       icon: <FaWater />,
       title: '节约用水',
-      description: '珍惜水资源，养成节约用水的好习惯。'
+      description: '珍惜水资源，养成节约用水的好习惯���'
     },
     {
       icon: <FaSeedling />,
@@ -116,6 +117,8 @@ const EnvironmentPage = () => {
           </Card>
         ))}
       </CardContainer>
+
+      <ChatBot />
     </PageContainer>
   );
 };

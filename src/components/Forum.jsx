@@ -314,20 +314,84 @@ const TagsContainer = styled.div`
   margin-top: 1rem;
 `;
 
-const FilterButton = styled.button`
-  padding: 0.8rem 1.5rem;
-  background-color: #0071e3;
-  color: white;
-  border: none;
+// 添加轮播图相关样式
+const CarouselContainer = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  position: relative;
+  overflow: hidden;
   border-radius: 20px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  margin: 1rem;
-  transition: all 0.3s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+`;
 
+const CarouselTrack = styled.div`
+  display: flex;
+  transition: transform 0.5s ease-in-out;
+  transform: translateX(-${props => props.currentSlide * 100}%);
+`;
+
+const Slide = styled.div`
+  min-width: 100%;
+  position: relative;
+`;
+
+const SlideImage = styled.img`
+  width: 100%;
+  height: 600px;
+  object-fit: contain;
+  background-color: #000;
+`;
+
+const SlideContent = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3rem;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+
+  h2 {
+    margin: 0 0 1rem 0;
+    font-size: 2.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    font-size: 1.5rem;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+`;
+
+const CarouselButton = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.8);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 2;
+  
   &:hover {
-    background-color: #005bb5;
+    background: white;
+  }
+
+  &.prev {
+    left: 1rem;
+  }
+
+  &.next {
+    right: 1rem;
   }
 `;
 
@@ -345,10 +409,42 @@ const Forum = () => {
     tags: [],
     newTag: '',
     image: null,
-    location: disasterLocation,
-    category: 'community'
+    location: disasterLocation
   });
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState('official');
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // 添加轮播图数据
+  const officialSlides = [
+    {
+      image: "https://media.npr.org/assets/img/2015/04/27/monkey-temple-comp_custom-25d2daaf34ff52407021e71eaa74d2f960a2926f.jpg?s=1600&c=85&f=webp", // 请确保这些图片存在
+      title: "Protecting Cultural Heritage",
+      description: "Emergency procedures for safeguarding historical artifacts"
+    },
+    {
+      image: "https://www.advantagearchives.com/wp-content/uploads/2024/09/disaster-plan-blog-thumbnail.png",
+      title: "Disaster Prevention",
+      description: "Guidelines for protecting cultural relics"
+    },
+    {
+      image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/ChristchurchBasilicaPostEarthquake_gobeirne.jpg/1600px-ChristchurchBasilicaPostEarthquake_gobeirne.jpg",
+      title: "Community Support",
+      description: "Join our preservation network"
+    }
+  ];
+
+  // 添加轮播控制函数
+  const handlePrevSlide = () => {
+    setCurrentSlide(prev => 
+      prev === 0 ? officialSlides.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide(prev => 
+      prev === officialSlides.length - 1 ? 0 : prev + 1
+    );
+  };
 
   // 获取所有帖子
   useEffect(() => {
@@ -365,13 +461,11 @@ const Forum = () => {
 
   // 根据灾区地址和过滤器条件过滤帖子
   const filteredPosts = posts.filter(post => 
-    post.location?.toLowerCase() === disasterLocation?.toLowerCase() && // Match disaster location if applicable
+    post.location?.toLowerCase() === disasterLocation?.toLowerCase() && // 只显示与灾区地址匹配的帖子
     (
       filter === 'all' || 
       (filter === 'offer' && post.type === 'offer') || 
-      (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency')) ||
-      (filter === 'official' && post.category === 'official') || // Include official filter
-      (filter === 'community' && post.category === 'community')   // Include community filter
+      (filter === 'Need' && (post.type === 'Need-regular' || post.type === 'Need-emergency'))
     )
   );
 
@@ -384,7 +478,6 @@ const Forum = () => {
     }));
   };
 
-  
   // 处理标签添加
   const handleAddTag = (e) => {
     e.preventDefault();
@@ -457,8 +550,7 @@ const Forum = () => {
       tags: [],
       newTag: '',
       image: null,
-      location: disasterLocation,
-      category: 'community'
+      location: disasterLocation
     });
   };
 
@@ -487,6 +579,7 @@ const Forum = () => {
             <option value="all">All Posts</option>
             <option value="Need">Need Posts</option>
             <option value="offer">Offer Posts</option>
+            <option value="official">Official</option>
           </FilterDropdown>
           <CreatePostButton onClick={() => setIsModalOpen(true)}>
             Create New Post
@@ -606,35 +699,50 @@ const Forum = () => {
 
       <MainContent>
         <ContentArea>
-          <PostGrid>
-            {filteredPosts.map(post => (
-              <PostCard key={post.id} type={post.type}>
-                <PostType className={post.type}>
-                  {post.type === 'Need-regular' && 'Regular Need'}
-                  {post.type === 'Need-emergency' && 'Emergency Need'}
-                  {post.type === 'offer' && 'Offer'}
-                </PostType>
-                <h3>{post.title}</h3>
-                <p>{post.content}</p>
-                <TagsContainer>
-                  {post.tags.map(tag => (
-                    <PostTag key={tag}>{tag}</PostTag>
-                  ))}
-                </TagsContainer>
-              </PostCard>
-            ))}
-          </PostGrid>
+          {filter === 'official' ? (
+            <CarouselContainer>
+              <CarouselTrack currentSlide={currentSlide}>
+                {officialSlides.map((slide, index) => (
+                  <Slide key={index}>
+                    <SlideImage src={slide.image} alt={slide.title} />
+                    <SlideContent>
+                      <h2>{slide.title}</h2>
+                      <p>{slide.description}</p>
+                    </SlideContent>
+                  </Slide>
+                ))}
+              </CarouselTrack>
+              <CarouselButton onClick={handlePrevSlide} className="prev">
+                ←
+              </CarouselButton>
+              <CarouselButton onClick={handleNextSlide} className="next">
+                →
+              </CarouselButton>
+            </CarouselContainer>
+          ) : (
+            <PostGrid>
+              {filteredPosts.map(post => (
+                <PostCard key={post.id} type={post.type}>
+                  <PostType className={post.type}>
+                    {post.type === 'Need-regular' && 'Regular Need'}
+                    {post.type === 'Need-emergency' && 'Emergency Need'}
+                    {post.type === 'offer' && 'Offer'}
+                  </PostType>
+                  <h3>{post.title}</h3>
+                  <p>{post.content}</p>
+                  <TagsContainer>
+                    {post.tags.map(tag => (
+                      <PostTag key={tag}>{tag}</PostTag>
+                    ))}
+                  </TagsContainer>
+                </PostCard>
+              ))}
+            </PostGrid>
+          )}
         </ContentArea>
       </MainContent>
-      {/* Official and Community Filter Buttons - Below Posts */}
-    <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', margin: '2rem 0' }}>
-      <FilterButton onClick={() => setFilter('official')}>Official</FilterButton>
-      <FilterButton onClick={() => setFilter('community')}>Community</FilterButton>
-    </div>
     </ForumContainer>
   );
 };
 
 export default Forum;
-
-

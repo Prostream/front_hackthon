@@ -1,0 +1,12 @@
+{
+  "chatbot": {
+    "title": "灾害应急助手",
+    "selectDisaster": "请选择灾害类型",
+    "disasters": {
+      "earthquake": "地震",
+      "flood": "洪水",
+      "typhoon": "台风",
+      "wildfire": "野火"
+    }
+  }
+} 
