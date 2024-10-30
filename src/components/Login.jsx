@@ -32,7 +32,7 @@ function Login() {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/login`, formData);
 
       if (response.status === 200) {
-        setMessage({ text: 'Login successful!', type: 'success' });
+        setMessage({ text: 'We will help you one step ahead of the disaster!', type: 'success' });
         setShowLocationModal(true); // 显示地址弹窗
       } else {
         setMessage({ text: `Login failed: ${response.data.message}`, type: 'error' });

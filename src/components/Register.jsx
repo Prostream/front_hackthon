@@ -33,7 +33,7 @@ function Register() {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/register`, formData);
 
       if (response.status === 200) {
-        setMessage({ text: 'Registration successful!', type: 'success' });
+        setMessage({ text: 'We will help you one step ahead of the disaster!', type: 'success' });
         setTimeout(() => navigate('/login'), 2000);
       } else {
         setMessage({ text: `Registration failed: ${response.data.message}`, type: 'error' });
