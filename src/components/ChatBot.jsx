@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
-import styled from '@emotion/styled';
 import { FaRobot, FaTimes } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import '../styles/ChatBot.css';
 
 // 预设的灾难类型和对应建议
 const DISASTER_RESPONSES = {
@@ -58,146 +58,6 @@ const DISASTER_RESPONSES = {
   }
 };
 
-const ChatBotContainer = styled.div`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1001;
-`;
-
-const ChatIcon = styled.div`
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background-color: #1d1d1f;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
-  
-  &:hover {
-    transform: scale(1.05);
-    background-color: #2d2d2f;
-  }
-`;
-
-const ChatWindow = styled.div`
-  position: absolute;
-  bottom: 70px;
-  right: 0;
-  width: 350px;
-  height: 500px;
-  background: #f5f5f7;
-  border-radius: 16px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-`;
-
-const ChatHeader = styled.div`
-  padding: 18px 20px;
-  background: #1d1d1f;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0.3px;
-`;
-
-const SelectContainer = styled.div`
-  padding: 20px;
-  background: white;
-  border-bottom: 1px solid #e5e5e5;
-`;
-
-const DisasterSelect = styled.select`
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid #e5e5e5;
-  border-radius: 12px;
-  font-size: 15px;
-  color: #1d1d1f;
-  background-color: white;
-  appearance: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:focus {
-    outline: none;
-    border-color: #1d1d1f;
-  }
-  
-  &:hover {
-    border-color: #1d1d1f;
-  }
-  
-  /* 添加自定义下拉箭头 */
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
-  padding-right: 40px;
-`;
-
-const ResponseArea = styled.div`
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  background: white;
-  
-  &::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  &::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  &::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-  }
-`;
-
-const AdviceList = styled.ul`
-  list-style: none;
-  padding: 0;
-  margin: 0;
-`;
-
-const AdviceItem = styled.li`
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  background: #f8f8f8;
-  border-radius: 8px;
-  color: #1d1d1f;
-  font-size: 14px;
-  line-height: 1.5;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: #f0f0f0;
-    transform: translateX(4px);
-  }
-`;
-
-const CloseButton = styled(FaTimes)`
-  cursor: pointer;
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    opacity: 1;
-    transform: rotate(90deg);
-  }
-`;
-
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedDisaster, setSelectedDisaster] = useState('');
@@ -208,23 +68,25 @@ const ChatBot = () => {
   };
 
   return (
-    <ChatBotContainer>
-      <ChatIcon onClick={() => setIsOpen(!isOpen)}>
+    <div className="chat-bot-container">
+      <div className="chat-icon" onClick={() => setIsOpen(!isOpen)}>
         <FaRobot size={28} />
-      </ChatIcon>
+      </div>
 
       {isOpen && (
-        <ChatWindow>
-          <ChatHeader>
+        <div className="chat-window">
+          <div className="chat-header">
             <span>Emergency Response Assistant</span>
-            <CloseButton 
+            <FaTimes 
+              className="close-button"
               size={20}
               onClick={() => setIsOpen(false)}
             />
-          </ChatHeader>
+          </div>
 
-          <SelectContainer>
-            <DisasterSelect 
+          <div className="select-container">
+            <select 
+              className="disaster-select"
               value={selectedDisaster}
               onChange={handleDisasterSelect}
             >
@@ -234,21 +96,21 @@ const ChatBot = () => {
                   {value.title}
                 </option>
               ))}
-            </DisasterSelect>
-          </SelectContainer>
+            </select>
+          </div>
 
-          <ResponseArea>
+          <div className="response-area">
             {selectedDisaster && (
-              <AdviceList>
+              <ul className="advice-list">
                 {DISASTER_RESPONSES[selectedDisaster].advice.map((advice, index) => (
-                  <AdviceItem key={index}>{advice}</AdviceItem>
+                  <li key={index} className="advice-item">{advice}</li>
                 ))}
-              </AdviceList>
+              </ul>
             )}
-          </ResponseArea>
-        </ChatWindow>
+          </div>
+        </div>
       )}
-    </ChatBotContainer>
+    </div>
   );
 };
 

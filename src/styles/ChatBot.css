@@ -1,0 +1,140 @@
+.chat-bot-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1001;
+}
+
+.chat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #1d1d1f;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.chat-icon:hover {
+  transform: scale(1.05);
+  background-color: #2d2d2f;
+}
+
+.chat-window {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 350px;
+  height: 500px;
+  background: #f5f5f7;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-header {
+  padding: 18px 20px;
+  background: #1d1d1f;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.select-container {
+  padding: 20px;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.disaster-select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e5e5e5;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #1d1d1f;
+  background-color: white;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.disaster-select:focus {
+  outline: none;
+  border-color: #1d1d1f;
+}
+
+.disaster-select:hover {
+  border-color: #1d1d1f;
+}
+
+.disaster-select {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+}
+
+.response-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background: white;
+}
+
+.response-area::-webkit-scrollbar {
+  width: 8px;
+}
+
+.response-area::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.response-area::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.advice-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.advice-item {
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: #f8f8f8;
+  border-radius: 8px;
+  color: #1d1d1f;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+}
+
+.advice-item:hover {
+  background: #f0f0f0;
+  transform: translateX(4px);
+}
+
+.close-button {
+  cursor: pointer;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+.close-button:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+} 
