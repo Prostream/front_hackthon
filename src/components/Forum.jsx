@@ -22,6 +22,8 @@ const Forum = () => {
   });
   const [filter, setFilter] = useState('official');
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const officialSlides = [
     {
@@ -157,6 +159,21 @@ const Forum = () => {
     window.location.href = '/';
   };
 
+  const handleSearch = async () => {
+    try {
+      console.log('开始搜索，关键词:', searchQuery);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search`, {
+        params: {
+          query: searchQuery
+        }
+      });
+      console.log('搜索结果:', response.data);
+      setSearchResults(response.data.data);
+    } catch (error) {
+      console.error('搜索失败:', error);
+    }
+  };
+
   return (
     <div className="forum-container">
       <header className="forum-header">
@@ -168,6 +185,23 @@ const Forum = () => {
           <div style={{ width: '116px' }}></div>
         </div>
         <div className="action-row">
+          <div className="search-container">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search Posts..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
+            />
+            <button className="search-button" onClick={handleSearch}>
+              搜索
+            </button>
+          </div>
           <select 
             className="filter-dropdown"
             value={filter} 
