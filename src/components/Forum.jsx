@@ -24,6 +24,8 @@ const Forum = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isSearchMode, setIsSearchMode] = useState(false);
 
   const officialSlides = [
     {
@@ -161,24 +163,94 @@ const Forum = () => {
 
   const handleSearch = async () => {
     try {
+      setIsSearching(true);
+      setIsSearchMode(true);
       console.log('开始搜索，关键词:', searchQuery);
 
-      // ✅ 改成调用 /api/vector
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/vector`, {
+      // 获取词向量和相似帖子
+      const vectorResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/vector`, {
         params: {
           query: searchQuery
         }
       });
 
-      console.log('后端返回词向量:', response.data.vector);  // ✅ 这里会打印词向量
-      // 你可以先临时存到状态或控制台查看
+      if (vectorResponse.data.success) {
+        console.log('相似帖子:', vectorResponse.data.similarPosts);
+        
+        // 获取相似帖子的详细信息
+        const postIds = vectorResponse.data.similarPosts.map(post => post.postId);
+        const postsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`);
+        
+        // 匹配相似帖子的完整信息
+        const matchedPosts = vectorResponse.data.similarPosts.map(similarPost => {
+          const fullPost = postsResponse.data.find(post => post._id === similarPost.postId);
+          return {
+            ...fullPost,
+            similarity: (similarPost.similarity * 100).toFixed(2) + '%'
+          };
+        }).filter(post => post._id); // 只保留找到的帖子
+
+        setSearchResults(matchedPosts);
+      }
     } catch (error) {
       console.error('搜索失败:', error);
+    } finally {
+      setIsSearching(false);
     }
+  };
+
+  // 添加清除搜索的函数
+  const clearSearch = () => {
+    setSearchQuery('');
+    setSearchResults([]);
+    setIsSearchMode(false);
+  };
+
+  // 修改 filter 变化的处理
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+    clearSearch(); // 切换 filter 时清除搜索状态
   };
 
   return (
     <div className="forum-container">
+      <style>
+        {`
+          .similarity-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007AFF;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+          }
+
+          .post-card {
+            position: relative;
+            /* ... 保持原有样式 ... */
+          }
+
+          .search-container {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+          }
+          .clear-search {
+            background: #f5f5f7;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+          }
+          .clear-search:hover {
+            background: #e5e5e7;
+          }
+        `}
+      </style>
       <header className="forum-header">
         <div className="title-row">
           <button className="back-button" onClick={handleBackToHome}>
@@ -202,13 +274,18 @@ const Forum = () => {
               }}
             />
             <button className="search-button" onClick={handleSearch}>
-              搜索
+              Search
             </button>
+            {isSearchMode && (
+              <button className="clear-search" onClick={clearSearch}>
+                Clear Search
+              </button>
+            )}
           </div>
           <select 
             className="filter-dropdown"
             value={filter} 
-            onChange={(e) => setFilter(e.target.value)}
+            onChange={(e) => handleFilterChange(e.target.value)}
           >
             <option value="all">All Posts</option>
             <option value="Need">Need Posts</option>
@@ -372,6 +449,36 @@ const Forum = () => {
               <button className="carousel-button next" onClick={handleNextSlide}>
                 →
               </button>
+            </div>
+          ) : isSearchMode && searchResults.length > 0 ? (
+            <div className="post-grid">
+              {searchResults.map(post => (
+                <div 
+                  key={post._id} 
+                  className="post-card"
+                  style={{
+                    '--card-bg': post.type === 'Need-regular' ? '#f5f5f7' :
+                                post.type === 'Need-emergency' ? '#fef2f2' :
+                                '#f2f7f2'
+                  }}
+                >
+                  <span className={`post-type ${post.type.toLowerCase()}`}>
+                    {post.type === 'Need-regular' && 'Regular Need'}
+                    {post.type === 'Need-emergency' && 'Emergency Need'}
+                    {post.type === 'offer' && 'Offer'}
+                  </span>
+                  <div className="similarity-badge">
+                    Similarity: {post.similarity}
+                  </div>
+                  <h3>{post.title}</h3>
+                  <p>{post.content}</p>
+                  <div className="tags-container">
+                    {post.tags.map(tag => (
+                      <span key={tag} className="post-tag">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <div className="post-grid">
