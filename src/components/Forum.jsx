@@ -162,13 +162,16 @@ const Forum = () => {
   const handleSearch = async () => {
     try {
       console.log('开始搜索，关键词:', searchQuery);
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts/search`, {
+
+      // ✅ 改成调用 /api/vector
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/vector`, {
         params: {
           query: searchQuery
         }
       });
-      console.log('搜索结果:', response.data);
-      setSearchResults(response.data.data);
+
+      console.log('后端返回词向量:', response.data.vector);  // ✅ 这里会打印词向量
+      // 你可以先临时存到状态或控制台查看
     } catch (error) {
       console.error('搜索失败:', error);
     }
