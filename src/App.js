@@ -8,7 +8,7 @@ import Register from './components/Register';
 import axios from 'axios';
 
 // 配置API基础URL
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || '/api';
+axios.defaults.baseURL = '';
 
 function App() {
   return (

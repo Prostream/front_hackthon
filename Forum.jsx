@@ -60,7 +60,7 @@ const Forum = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get('/api/posts');
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`);
         setPosts(response.data);
       } catch (error) {
         console.error("Failed to fetch posts:", error);
@@ -137,7 +137,7 @@ const Forum = () => {
     };
 
     try {
-      const response = await axios.post('/api/posts', newPost);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/posts`, newPost);
       setPosts(prev => [...prev, response.data]);
       setIsModalOpen(false);
     } catch (error) {
@@ -167,7 +167,7 @@ const Forum = () => {
       setIsSearchMode(true);
       console.log('开始搜索，关键词:', searchQuery);
 
-      const vectorResponse = await axios.get('/api/vector', {
+      const vectorResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/vector`, {
         params: {
           query: searchQuery
         }
@@ -179,35 +179,69 @@ const Forum = () => {
           ...post,
           similarity: (post.similarity * 100).toFixed(2) + '%'
         }));
-        
-        // 获取前5个帖子的标题
-        const top5Titles = similarPosts.slice(0, 5).map(post => post.title).join(', ');
-        
+
+        const sanitize = (text) => {
+          return text.replace(/[`<>{}[\]\\]/g, '') // 去掉特殊字符
+              .replace(/\n/g, ' ')          // 移除换行
+              .replace(/\s+/g, ' ')         // 合并多空格
+              .slice(0, 300);               // 限制字数
+        };
+
+        const top5PostsFormatted = similarPosts.slice(0, 5).map((post, i) => (
+            `Post ${i + 1}: ` +
+            `Content: ${sanitize(post.content)} ` +
+            `Tags: ${post.tags?.join(', ') || 'None'}`
+        )).join('\n');
+
         // 调用新的 API
         try {
-          const prompt = `User keyword: ${searchQuery} Answer: ${top5Titles}`;
-          console.log('发送聊天请求:', { prompt });
+
+          const prompt = `
+          INSTRUCTION: You are an assistant providing disaster help. A user asked the following question:
+          "${searchQuery}"
           
-          const chatResponse = await axios.post('/api/chat', 
-            { prompt },
-            {
-              headers: {
-                'Content-Type': 'application/json'
+          You have access to community-sourced posts (see below). Your job is to generate a short answer that tells the user where to get help or resources. Do NOT write code, do NOT continue the prompt. Just reply naturally in 3-4 short sentences.
+          
+          COMMUNITY POSTS:
+          ${top5PostsFormatted}
+          
+          ANSWER:
+          `;
+
+          const chatResponse = await axios.post(`${process.env.REACT_APP_API_URL}/api/chat`,
+              {
+                prompt,
+                stop: ["\n\n", "HINT:", "#", "```"] // Stop sequences to prevent additional content
+              },
+              {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
               }
-            }
           );
-          
+
           console.log('Chat API 响应:', chatResponse.data);
-          
+
           if (!chatResponse.data || !chatResponse.data.response) {
             throw new Error('API 返回无效响应');
           }
-          
+
+          // 处理响应，去除不相关内容
+          let cleanResponse = chatResponse.data.response;
+
+          // 移除引号包裹的内容后的任何内容
+          cleanResponse = cleanResponse.split(/\n\n|HINT:|#|```/)[0].trim();
+
+          // 如果响应被引号包裹，只提取内容
+          if (cleanResponse.startsWith('"') && cleanResponse.endsWith('"')) {
+            cleanResponse = cleanResponse.slice(1, -1).trim();
+          }
+
           // 将 AI 响应添加到搜索结果中
           similarPosts.unshift({
             _id: 'ai-response',
             title: 'AI result',
-            content: chatResponse.data.response,
+            content: cleanResponse,
             type: 'official',
             tags: ['AI Analysis'],
             similarity: '100%'
