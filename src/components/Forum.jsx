@@ -166,7 +166,6 @@ const Forum = () => {
       setIsSearching(true);
       setIsSearchMode(true);
       console.log('开始搜索，关键词:', searchQuery);
-      console.log('isSearchMode设置为:', true);
 
       const vectorResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/vector`, {
         params: {
@@ -176,13 +175,56 @@ const Forum = () => {
 
       if (vectorResponse.data.success) {
         console.log('相似帖子:', vectorResponse.data.similarPosts);
-        setSearchResults(vectorResponse.data.similarPosts.map(post => ({
+        const similarPosts = vectorResponse.data.similarPosts.map(post => ({
           ...post,
           similarity: (post.similarity * 100).toFixed(2) + '%'
-        })));
+        }));
+        
+        // 获取前5个帖子的标题
+        const top5Titles = similarPosts.slice(0, 5).map(post => post.title).join(', ');
+        
+        // 调用新的 API
+        try {
+          const prompt = `User keyword: ${searchQuery} Answer: ${top5Titles}`;
+          console.log('发送聊天请求:', { prompt });
+          
+          const chatResponse = await axios.post(`${process.env.REACT_APP_API_URL}/api/chat`, 
+            { prompt },
+            {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+          
+          console.log('Chat API 响应:', chatResponse.data);
+          
+          if (!chatResponse.data || !chatResponse.data.response) {
+            throw new Error('API 返回无效响应');
+          }
+          
+          // 将 AI 响应添加到搜索结果中
+          similarPosts.unshift({
+            _id: 'ai-response',
+            title: 'AI result',
+            content: chatResponse.data.response,
+            type: 'official',
+            tags: ['AI Analysis'],
+            similarity: '100%'
+          });
+          
+          setSearchResults(similarPosts);
+        } catch (chatError) {
+          console.error('Chat API 调用失败:', chatError);
+          // 即使聊天 API 失败，也显示搜索结果
+          setSearchResults(similarPosts);
+          // 显示错误提示
+          alert('AI 分析服务暂时不可用，但搜索结果仍然可用');
+        }
       }
     } catch (error) {
       console.error('搜索失败:', error);
+      alert('搜索失败: ' + (error.response?.data?.error || error.message));
     } finally {
       setIsSearching(false);
     }
