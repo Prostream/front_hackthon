@@ -5,6 +5,10 @@ import HomePage from './components/HomePage';
 import Forum from './components/Forum';
 import Login from './components/Login';
 import Register from './components/Register';
+import axios from 'axios';
+
+// 配置API基础URL
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || '/api';
 
 function App() {
   return (

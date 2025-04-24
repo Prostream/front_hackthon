@@ -166,8 +166,8 @@ const Forum = () => {
       setIsSearching(true);
       setIsSearchMode(true);
       console.log('开始搜索，关键词:', searchQuery);
+      console.log('isSearchMode设置为:', true);
 
-      // 获取词向量和相似帖子
       const vectorResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/vector`, {
         params: {
           query: searchQuery
@@ -176,21 +176,10 @@ const Forum = () => {
 
       if (vectorResponse.data.success) {
         console.log('相似帖子:', vectorResponse.data.similarPosts);
-        
-        // 获取相似帖子的详细信息
-        const postIds = vectorResponse.data.similarPosts.map(post => post.postId);
-        const postsResponse = await axios.get(`${process.env.REACT_APP_API_URL}/api/posts`);
-        
-        // 匹配相似帖子的完整信息
-        const matchedPosts = vectorResponse.data.similarPosts.map(similarPost => {
-          const fullPost = postsResponse.data.find(post => post._id === similarPost.postId);
-          return {
-            ...fullPost,
-            similarity: (similarPost.similarity * 100).toFixed(2) + '%'
-          };
-        }).filter(post => post._id); // 只保留找到的帖子
-
-        setSearchResults(matchedPosts);
+        setSearchResults(vectorResponse.data.similarPosts.map(post => ({
+          ...post,
+          similarity: (post.similarity * 100).toFixed(2) + '%'
+        })));
       }
     } catch (error) {
       console.error('搜索失败:', error);
@@ -211,6 +200,14 @@ const Forum = () => {
     setFilter(newFilter);
     clearSearch(); // 切换 filter 时清除搜索状态
   };
+
+  // 在渲染部分之前添加状态检查
+  console.log('渲染时状态:', {
+    filter,
+    isSearchMode,
+    searchResultsLength: searchResults.length,
+    searchResults
+  });
 
   return (
     <div className="forum-container">
@@ -484,7 +481,7 @@ const Forum = () => {
             <div className="post-grid">
               {filteredPosts.map(post => (
                 <div 
-                  key={post.id} 
+                  key={post._id || post.id} 
                   className="post-card"
                   style={{
                     '--card-bg': post.type === 'Need-regular' ? '#f5f5f7' :
